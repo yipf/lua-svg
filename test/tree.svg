@@ -1,0 +1,89 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="1000" height="1000" version="1.1" xmlns="http://www.w3.org/2000/svg" font-size="20px" stroke-width = "2" fill="white" stroke="black" viewBox="0 0 1000 1000">
+    <defs>
+		<marker id="arrow" viewBox="0 0 20 20" refX="20" refY="10" markerUnits="strokeWidth" fill="black" markerWidth="8" markerHeight="6" orient="auto">
+			<path d="M 0 0 L 20 10 L 0 20 L 10 10 z"/>
+		</marker>
+		<marker id="point2d" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="orange" markerWidth="6" markerHeight="6" orient="auto">
+			<circle cx="10" cy="10" r="9" />
+		</marker>
+				<marker id="point2d-black" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="black" markerWidth="6" markerHeight="6" orient="auto">
+			<circle cx="10" cy="10" r="9" />
+		</marker>
+		<marker id="point2d-white" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="white" markerWidth="6" markerHeight="6" orient="auto">
+			<circle cx="10" cy="10" r="9" />
+		</marker>
+		<marker id="point2d-gray" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="#888888" markerWidth="6" markerHeight="6" orient="auto">
+			<circle cx="10" cy="10" r="9" />
+		</marker>
+		 <filter id='shadow' filterRes='50' x='0' y='0'>
+			<feGaussianBlur stdDeviation='2 2'/>
+			<feOffset dx='2' dy='2'/>
+		</filter>
+		<linearGradient x1='0%' x2='100%' id='linear0' y1='0%' y2='100%'>
+			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='100%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+		</linearGradient>
+		<linearGradient x1='0%' x2='100%' id='multi0' y1='100%' y2='100%'>
+			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='45%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='46%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='50%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='54%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='55%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+			<stop offset='100%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+		</linearGradient>
+		<linearGradient x1='100%' x2='0%' id='multi1' y1='100%' y2='100%'>
+			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='45%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='46%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='50%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='54%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='55%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+			<stop offset='100%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+		</linearGradient>
+		<linearGradient x1='100%' x2='0%' id='multi2' y1='100%' y2='100%'>
+			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='45%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='46%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='50%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='54%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='55%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='100%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+		</linearGradient>
+		<radialGradient id="radial0" cx="30%" cy="30%" r="50%">
+			<stop offset="0%" style="stop-color:rgb(255,255,255); stop-opacity:0" />
+			<stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
+     </radialGradient>
+	 
+     </defs>
+	<rect x="141.66666666667" y="25" width="50" height="50" filter="@filter@"  style="nil"/>
+<text x="166.66666666667" y="58" stroke-width="0" fill="black" text-anchor="middle">root</text>
+<rect x="25" y="125" width="50" height="50" filter="@filter@"  style="fill:orange;"/>
+<text x="50" y="158" stroke-width="0" fill="black" text-anchor="middle">left</text>
+<path d = "M166 75 L166 100 L50 100 L50 125" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="nil" filter="@FILTER@" />
+<rect x="258.33333333333" y="125" width="50" height="50" filter="@filter@"  style="fill:red;"/>
+<text x="283.33333333333" y="158" stroke-width="0" fill="black" text-anchor="middle">right</text>
+<rect x="125" y="225" width="50" height="50" filter="@filter@"  style="nil"/>
+<text x="150" y="258" stroke-width="0" fill="black" text-anchor="middle">r1</text>
+<path d = "M283 175 L283 200 L150 200 L150 225" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="nil" filter="@FILTER@" />
+<rect x="225" y="225" width="50" height="50" filter="@filter@"  style="nil"/>
+<text x="250" y="258" stroke-width="0" fill="black" text-anchor="middle">r2</text>
+<path d = "M283 175 L283 200 L250 200 L250 225" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="nil" filter="@FILTER@" />
+<rect x="425" y="225" width="50" height="50" filter="@filter@"  style="fill:grey;"/>
+<text x="450" y="258" stroke-width="0" fill="black" text-anchor="middle">r3</text>
+<rect x="325" y="325" width="50" height="50" filter="@filter@"  style="nil"/>
+<text x="350" y="358" stroke-width="0" fill="black" text-anchor="middle">rr1</text>
+<path d = "M450 275 L450 300 L350 300 L350 325" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="nil" filter="@FILTER@" />
+<rect x="425" y="325" width="50" height="50" filter="@filter@"  style="nil"/>
+<text x="450" y="358" stroke-width="0" fill="black" text-anchor="middle">rr2</text>
+<path d = "M450 275 L450 300 L450 300 L450 325" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="nil" filter="@FILTER@" />
+<rect x="525" y="325" width="50" height="50" filter="@filter@"  style="nil"/>
+<text x="550" y="358" stroke-width="0" fill="black" text-anchor="middle">rr3</text>
+<path d = "M450 275 L450 300 L550 300 L550 325" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="nil" filter="@FILTER@" />
+<path d = "M283 175 L283 200 L450 200 L450 225" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="nil" filter="@FILTER@" />
+<path d = "M166 75 L166 100 L283 100 L283 125" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="nil" filter="@FILTER@" />
+<path d = "M600 500 L540 529 L530 595 L484 547 L419 558 L450 500 L419 441 L484 452 L530 404 L540 470 Z" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "@HEAD@" marker-mid="url(#point2d)" marker-start="url(#point2d)" style="fill:orange;" filter="@FILTER@" />
+<text x="500" y="500" stroke-width="0" fill="black" text-anchor="middle">FIVE</text>
+</svg>

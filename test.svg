@@ -1,0 +1,107 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="800" height="600" version="1.1" xmlns="http://www.w3.org/2000/svg" font-size="20px" stroke-width = "2" fill="white" stroke="black" viewBox="0 0 800 600">
+    <defs>
+		<marker id="arrow" viewBox="0 0 20 20" refX="20" refY="10" markerUnits="strokeWidth" fill="black" markerWidth="8" markerHeight="6" orient="auto">
+			<path d="M 0 0 L 20 10 L 0 20 L 10 10 z"/>
+		</marker>
+		<marker id="point2d" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="orange" markerWidth="6" markerHeight="6" orient="auto">
+			<circle cx="10" cy="10" r="9" />
+		</marker>
+				<marker id="point2d-black" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="black" markerWidth="6" markerHeight="6" orient="auto">
+			<circle cx="10" cy="10" r="9" />
+		</marker>
+		<marker id="point2d-white" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="white" markerWidth="6" markerHeight="6" orient="auto">
+			<circle cx="10" cy="10" r="9" />
+		</marker>
+		<marker id="point2d-gray" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="#888888" markerWidth="6" markerHeight="6" orient="auto">
+			<circle cx="10" cy="10" r="9" />
+		</marker>
+		 <filter id='shadow' filterRes='50' x='0' y='0'>
+			<feGaussianBlur stdDeviation='2 2'/>
+			<feOffset dx='2' dy='2'/>
+		</filter>
+		<linearGradient x1='0%' x2='100%' id='linear0' y1='0%' y2='100%'>
+			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='100%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+		</linearGradient>
+		<linearGradient x1='0%' x2='100%' id='multi0' y1='100%' y2='100%'>
+			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='45%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='46%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='50%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='54%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='55%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+			<stop offset='100%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+		</linearGradient>
+		<linearGradient x1='100%' x2='0%' id='multi1' y1='100%' y2='100%'>
+			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='45%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='46%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='50%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='54%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='55%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+			<stop offset='100%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
+		</linearGradient>
+		<linearGradient x1='100%' x2='0%' id='multi2' y1='100%' y2='100%'>
+			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='45%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='46%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='50%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='54%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
+			<stop offset='55%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+			<stop offset='100%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
+		</linearGradient>
+		<radialGradient id="radial0" cx="30%" cy="30%" r="50%">
+			<stop offset="0%" style="stop-color:rgb(255,255,255); stop-opacity:0" />
+			<stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
+     </radialGradient>
+	 
+     </defs>
+	<ellipse cx="480" cy="380" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="480" y="388" stroke-width="0" fill="black" text-anchor="middle">1</text>
+<ellipse cx="560" cy="300" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="560" y="308" stroke-width="0" fill="black" text-anchor="middle">2</text>
+<ellipse cx="640" cy="220" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="640" y="228" stroke-width="0" fill="black" text-anchor="middle">3</text>
+<ellipse cx="509.28203230276" cy="270.71796769724" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="509.28203230276" y="278.71796769724" stroke-width="0" fill="black" text-anchor="middle">1</text>
+<ellipse cx="480" cy="161.43593539449" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="480" y="169.43593539449" stroke-width="0" fill="black" text-anchor="middle">2</text>
+<ellipse cx="450.71796769724" cy="52.153903091735" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="450.71796769724" y="60.153903091735" stroke-width="0" fill="black" text-anchor="middle">3</text>
+<ellipse cx="429.28203230276" cy="190.71796769724" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="429.28203230276" y="198.71796769724" stroke-width="0" fill="black" text-anchor="middle">1</text>
+<ellipse cx="320" cy="161.43593539449" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="320" y="169.43593539449" stroke-width="0" fill="black" text-anchor="middle">2</text>
+<ellipse cx="210.71796769724" cy="132.15390309173" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="210.71796769724" y="140.15390309173" stroke-width="0" fill="black" text-anchor="middle">3</text>
+<ellipse cx="320" cy="220" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="320" y="228" stroke-width="0" fill="black" text-anchor="middle">1</text>
+<ellipse cx="240" cy="300" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="240" y="308" stroke-width="0" fill="black" text-anchor="middle">2</text>
+<ellipse cx="160" cy="380" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="160" y="388" stroke-width="0" fill="black" text-anchor="middle">3</text>
+<ellipse cx="290.71796769724" cy="329.28203230276" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="290.71796769724" y="337.28203230276" stroke-width="0" fill="black" text-anchor="middle">1</text>
+<ellipse cx="320" cy="438.56406460551" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="320" y="446.56406460551" stroke-width="0" fill="black" text-anchor="middle">2</text>
+<ellipse cx="349.28203230275" cy="547.84609690827" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="349.28203230275" y="555.84609690827" stroke-width="0" fill="black" text-anchor="middle">3</text>
+<ellipse cx="370.71796769724" cy="409.28203230276" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="370.71796769724" y="417.28203230276" stroke-width="0" fill="black" text-anchor="middle">1</text>
+<ellipse cx="480" cy="438.56406460551" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="480" y="446.56406460551" stroke-width="0" fill="black" text-anchor="middle">2</text>
+<ellipse cx="589.28203230276" cy="467.84609690827" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="589.28203230276" y="475.84609690827" stroke-width="0" fill="black" text-anchor="middle">3</text>
+<ellipse cx="480" cy="380" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="480" y="388" stroke-width="0" fill="black" text-anchor="middle">1</text>
+<ellipse cx="560" cy="300" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="560" y="308" stroke-width="0" fill="black" text-anchor="middle">2</text>
+<ellipse cx="640" cy="220" rx="10" ry="10"   style="fill:orange;" filter="@filter@" />
+<text x="640" y="228" stroke-width="0" fill="black" text-anchor="middle">3</text>
+<path d = "M470 380 C470 380 470 300 550 300" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "url(#arrow)" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="stroke-dasharray:10,3;" filter="@FILTER@" />
+<text x="470" y="330" stroke-width="0" fill="black" text-anchor="middle">test</text>
+<path d = "M550 300 C550 300 550 220 630 220" fill = "none" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "url(#arrow)" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="stroke-dasharray:10,3;" filter="@FILTER@" />
+<text x="550" y="250" stroke-width="0" fill="black" text-anchor="middle">test</text>
+</svg>

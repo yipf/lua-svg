@@ -1,0 +1,22 @@
+require "tree"
+
+local tr={"root",	{
+	{"right",{
+		{"r1"},
+		{"r2"},
+		{"r3",{
+			{"rr1"},
+			{"rr2"},
+			{"rr3"},
+			{"rr4"},
+		}},
+	}},	
+	{"left"}
+	}
+}
+
+local tr,w,h=make_tree(tr)
+
+node{TYPE="rect",cx=50+w/2,cy=50+h/2,rx=w/2+30,ry=h/2+30,STYLE="fill:none;"}
+
+export("tree.svg")

@@ -1,0 +1,39 @@
+require "tree"
+
+set_tree_props{shape="N"}
+
+local tr,x,y=make_tree_UD{"root",	{
+	{"left"},
+	{"right",{
+		{"r1"},
+		{"r2"},
+		{"r3",{
+			{"rr1"},
+			{"rr2"},
+			{"rr3"},
+		}},
+	}},	
+
+	}
+}
+
+print(x,y)
+
+tr.CHILD[1].STYLE="fill:orange;"
+tr.CHILD[2].STYLE="fill:red;"
+tr.CHILD[2].CHILD[3].STYLE="fill:grey;"
+
+local p={CLOSE=true,STYLE="fill:orange;",cx=500,cy=500,LABEL="FIVE",MIDDLE="url(#point2d)",TAIL="url(#point2d)",SMOOTH}
+
+local r,a
+local cos,sin,pi= math.cos,math.sin,math.pi
+for i=1,10 do
+	r=(i%2+1)*50
+	p[i]={500+r*cos((i-1)*pi/5),500+r*sin((i-1)*pi/5)}
+end
+
+path(p)
+
+export("tree.svg")
+
+

@@ -1,0 +1,30 @@
+
+local choice=function(label,x,y)
+	return node{LABEL=label,LPOS="D8M",cx=x or 0, cy=y or 0, TYPE="diamond", rx=50, ry=25}
+end
+
+local statement=function(label,x,y)
+	return node{LABEL=label,LPOS="D8M",cx=x or 0, cy=y or 0, TYPE="rect", rx=50, ry=25}
+end
+
+local connect=function(from,to,shape,label,lpos,offset)
+	return edge{FROM=from,TO=to,LABEL=label,LPOS=lpos,SHAPE=shape or "-",OFFSET=offset or 100, HEAD="url(#arrow)"}
+end
+
+local nodes={
+statement("A",100,100),
+statement("B",100,200),
+choice("C?",100,300),
+statement("D",100,400),
+statement("E",100,500),
+statement("F",100,600),
+}
+
+connect(nodes[1],nodes[2])
+connect(nodes[2],nodes[3])
+connect(nodes[3],nodes[4])
+connect(nodes[3],nodes[5],"C"," NO","S")
+connect(nodes[4],nodes[5])
+connect(nodes[5],nodes[6])
+
+export("flowchart.svg",true)

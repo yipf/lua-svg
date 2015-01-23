@@ -99,7 +99,6 @@ local get_border=function(x,y,cx,cy,rx,ry,tp)
 			return cx+(x>cx and dx or -dx),cy+(y>cy and dy or -dy)
 		end
 	end
-	if tp=="database" and y>cy then return x>cx and cx+rx or x<cx and cx-rx or x, cy+ry+ry/2 end
 	return x>cx and cx+rx or x<cx and cx-rx or x, y>cy and cy+ry or y<cy and cy-ry or y
 end
 
@@ -139,11 +138,13 @@ function utf8strlen(str)
 end
 
 local format_=function(tp,str)
+	print(tp,str)
 	str=string.match(str,"^{(.-)}$")
 	return string.format("<tspan font-size='60%%' baseline-shift='%s'>%s</tspan>",tp=="^" and "super" or "sub",str)
 end
 
 local format_str=function(str)
+	print(str)
 	str=string.gsub(str,"([_%^])(%b{})",format_)
 	return str
 end
@@ -158,16 +159,17 @@ local STYLE_FMTS={
 	fill="fill:%s;",
 	stroke_width="stroke-width:%s;",
 	stroke="stroke:%s;",
-	noborder="stroke-width:0;"
+	noboder="stroke-width:0;"
 }
 
 
 make_canvas=function(w,h,cols,rows,fontsize,linewidth)
-	w=w or 800;	h=h or 600;	cols=cols or 10;	rows=rows or 10; fontsize=fontsize or 18; linewidth=linewidth or 1.5;
+	w=w or 800;	h=h or 600;	cols=cols or 10;	rows=rows or 10; fontsize=fontsize or 20; linewidth=linewidth or 1.5;
 	local dw,dh=w/cols,h/rows
 	local labels,nodes,paths,defs={},{},{},{}
 	local push,format,concat=table.insert,string.format,table.concat
 	local SVG,convert=SVG,convert
+	
 	local convert_label=function(o)
 		local label=o.LABEL
 		local cy=o.cy
@@ -187,7 +189,7 @@ make_canvas=function(w,h,cols,rows,fontsize,linewidth)
 	
 	local make_label=function(o)
 		local tx,ty,align
-		if o.LPOS then tx,ty,align=apply_offset(o.LPOS,0,0) end
+		if o.LPOS then tx,ty,align=apply_offset(o.LPOS,x,y) end
 		o.tx=tx or 0 ; o.ty=(ty or 0)+fontsize/3 or 0; o.align=align or "middle";
 		o.fontsize=o.fontsize or fontsize
 		return o
@@ -199,29 +201,16 @@ make_canvas=function(w,h,cols,rows,fontsize,linewidth)
 		return o
 	end
 	
-	local style=function(o)
-		if type(o)~="table" then return o end
-		local t={}
-		for k,v in pairs(o) do
-			k=STYLE_FMTS[k]
-			if k then push(t,format(k,tostring(v))) end
-		end
-		return concat(t)
-	end
-	
-	local default_style={fill="none"}
 	local node=function(o)
 		o.cx=o.cx or 0; o.cy=o.cy or 0; o.rx=o.rx or dw/3; o.ry=o.ry or dh/3; 
 		o.TYPE=o.TYPE or "rect"
-		o.STYLE=style(o.STYLE or default_style)
 		push(nodes,o)
 		return o
 	end
 	
 	local path=function(o)
 		o.PATH=points2path(o,o.CLOSED,o.CURVE,nodes)
---~ 		if o.STYLE then  o.STYLE= LINE_STYLES[o.STYLE] end
-		o.STYLE=style(o.STYLE)
+		if o.STYLE then  o.STYLE= LINE_STYLES[o.STYLE] end
 		push(paths,o)
 		return o
 	end
@@ -254,24 +243,14 @@ make_canvas=function(w,h,cols,rows,fontsize,linewidth)
 	
 	local export=function(filepath)
 		local t={w=w,h=h,fs=fontsize,lw=linewidth}
-		
-		
 		for i,n in ipairs(nodes) do 
-			n=copy(n)
 			if n.SHADOW then n.filter="url(#shadow)"; push(t,convert(n,SVG[n.TYPE or "rect"] or SVG['rect'])); end
 			n.filter=""
 			push(t,convert(n,SVG[n.TYPE or "rect"] or SVG['rect']))
 			if n.LABEL then push(t,convert_label(make_label(n))) end
 		end
-		
-		for i,p in ipairs(paths) do p=copy(p); push(t,convert(p,SVG['path'])) end
-		
+		for i,p in ipairs(paths) do push(t,convert(p,SVG['path'])) end
 		for i,l in ipairs(labels) do
-			l=copy(l)
-			if l.BGCOLOR then
-				l.STYLE=style{noborder=true,fill=l.BGCOLOR}
-				push(t,convert(l,SVG['rect'])) 
-			end
 			push(t,convert_label(l))  
 		end
 		t.VALUE=table.concat(t,"\n")
@@ -284,111 +263,55 @@ make_canvas=function(w,h,cols,rows,fontsize,linewidth)
 			print(str)
 		end
 	end
-
-	local make_label_box=function(cx,cy,str,lpos)
-		local rx,ry
-		if lpos then rx,ry=0,0 else rx,ry=utf8strlen(str)*fontsize/4,fontsize/2 end
-		return node{cx=cx,cy=cy,rx=rx,ry=ry,LABEL=str,STYLE="fill:none;stroke-width:0;",TYPE="ellipse",LPOS=lpos}
-	end
 	
 	-- extend functions
-	local edge
-	edge=function(o)
+	local edge=function(o)
 		local from,to,shape=o.FROM,o.TO,o.SHAPE
 		shape=shape or "I"
 		if not from or not to or from==to then return end
-		local mx,my,sx,sy,ex,ey,n
+		local mx,my,sx,sy,ex,ey
 		if shape=="I" then
-			sx,sy=get_border(to.cx,to.cy,from.cx,from.cy,from.rx,from.ry,from.TYPE)
-			ex,ey=get_border(from.cx,from.cy,to.cx,to.cy,to.rx,to.ry,to.TYPE)
-			mx,my=(sx+ex)/2,(sy+ey)/2
-			if o.LABEL then 
-				n=make_label_box(mx,my,o.LABEL,o.LPOS)
-				edge{FROM=from,TO=n,SHAPE="I",STYLE=o.STYLE,TAIL=o.TAIL}
-				edge{FROM=n,TO=to,SHAPE="I",STYLE=o.STYLE,HEAD=o.HEAD}
-				return
-			else 
-				o[1]={sx,sy}
-				o[2]={ex,ey}
-			end
+			mx,my=(from.cx+to.cx)/2,(from.cy+to.cy)/2
+			o[1]={get_border(to.cx,to.cy,from.cx,from.cy,from.rx,from.ry,from.TYPE)}; 
+			o[2]={get_border(from.cx,from.cy,to.cx,to.cy,to.rx,to.ry,to.TYPE)};
 		elseif shape=="7" then
 			mx,my=to.cx,from.cy
-			if o.LABEL then 
-				n=make_label_box(mx,my,o.LABEL,o.LPOS)
-				edge{FROM=from,TO=n,SHAPE="I",STYLE=o.STYLE,TAIL=o.TAIL}
-				edge{FROM=n,TO=to,SHAPE="I",STYLE=o.STYLE,HEAD=o.HEAD}
-				return
-			else 
-				o[1]={get_border(mx,my,from.cx,from.cy,from.rx,from.ry)}
-				o[2]={mx,my}
-				o[3]={get_border(mx,my,to.cx,to.cy,to.rx,to.ry)}
-			end
+			o[1]={get_border(mx,my,from.cx,from.cy,from.rx,from.ry)}
+			o[2]={mx,my}
+			o[3]={get_border(mx,my,to.cx,to.cy,to.rx,to.ry)}
 		elseif shape=="L" then
 			mx,my=from.cx,to.cy
-			if o.LABEL then 
-				n=make_label_box(mx,my,o.LABEL,o.LPOS)
-				edge{FROM=from,TO=n,SHAPE="I",STYLE=o.STYLE,TAIL=o.TAIL}
-				edge{FROM=n,TO=to,SHAPE="I",STYLE=o.STYLE,HEAD=o.HEAD}
-				return
-			else 
-				o[1]={get_border(mx,my,from.cx,from.cy,from.rx,from.ry)}
-				o[2]={mx,my}
-				o[3]={get_border(mx,my,to.cx,to.cy,to.rx,to.ry)}
-			end
+			o[1]={get_border(mx,my,from.cx,from.cy,from.rx,from.ry)}
+			o[2]={mx,my}
+			o[3]={get_border(mx,my,to.cx,to.cy,to.rx,to.ry)}
 		elseif shape=="N" then
 			mx,my=(from.cx+to.cx)/2,(from.cy+to.cy)/2
-			if o.LABEL then 
-				n=make_label_box(mx,my,o.LABEL,o.LPOS)
-				edge{FROM=from,TO=n,SHAPE="L",STYLE=o.STYLE,TAIL=o.TAIL}
-				edge{FROM=n,TO=to,SHAPE="7",STYLE=o.STYLE,HEAD=o.HEAD}
-				return
-			else 
-				o[1]={get_border(from.cx,my,from.cx,from.cy,from.rx,from.ry)}
-				o[2]={from.cx,my}
-				o[3]={to.cx,my}
-				o[4]={get_border(to.cx,my,to.cx,to.cy,to.rx,to.ry)}
-			end
+			o[1]={get_border(from.cx,my,from.cx,from.cy,from.rx,from.ry)}
+			o[2]={from.cx,my}
+			o[3]={to.cx,my}
+			o[4]={get_border(to.cx,my,to.cx,to.cy,to.rx,to.ry)}
 		elseif shape=="Z" then
 			mx,my=(from.cx+to.cx)/2,(from.cy+to.cy)/2
-			if o.LABEL then 
-				n=make_label_box(mx,my,o.LABEL,o.LPOS)
-				edge{FROM=from,TO=n,	SHAPE="7",STYLE=o.STYLE,TAIL=o.TAIL}
-				edge{FROM=n,TO=to,SHAPE="L",STYLE=o.STYLE,HEAD=o.HEAD}
-				return
-			else 
-				o[1]={get_border(mx,from.cy,from.cx,from.cy,from.rx,from.ry)}
-				o[2]={mx,from.cy}
-				o[3]={mx,to.cy}
-				o[4]={get_border(mx,to.cy,to.cx,to.cy,to.rx,to.ry)}
-			end
+			o[1]={get_border(mx,from.cy,from.cx,from.cy,from.rx,from.ry)}
+			o[2]={mx,from.cy}
+			o[3]={mx,to.cy}
+			o[4]={get_border(mx,to.cy,to.cx,to.cy,to.rx,to.ry)}
 		elseif shape=="U" then
 			mx,my= (from.cx+to.cx)/2,get_outer(o.DIR=="U" and -dh or dh,from.cy,to.cy)
-			if o.LABEL then 
-				n=make_label_box(mx,my,o.LABEL,o.LPOS)
-				edge{FROM=from,TO=n,	SHAPE="L",STYLE=o.STYLE,TAIL=o.TAIL}
-				edge{FROM=n,TO=to,SHAPE="7",STYLE=o.STYLE,HEAD=o.HEAD}
-				return
-			else 
-				o[1]={get_border(from.cx,my,from.cx,from.cy,from.rx,from.ry)}
-				o[2]={from.cx,my}
-				o[3]={to.cx,my}
-				o[4]={get_border(to.cx,my,to.cx,to.cy,to.rx,to.ry)}
-			end
+			o[1]={get_border(from.cx,my,from.cx,from.cy,from.rx,from.ry)}
+			o[2]={from.cx,my}
+			o[3]={to.cx,my}
+			o[4]={get_border(to.cx,my,to.cx,to.cy,to.rx,to.ry)}
 		elseif shape=="C" then
 			mx,my= get_outer(o.DIR=="L" and -dw or dw,from.cx,to.cx),(from.cy+to.cy)/2
-			if o.LABEL then 
-				n=make_label_box(mx,my,o.LABEL,o.LPOS)
-				edge{FROM=from,TO=n,	SHAPE="7",STYLE=o.STYLE,TAIL=o.TAIL}
-				edge{FROM=n,TO=to,SHAPE="L",STYLE=o.STYLE,HEAD=o.HEAD}
-				return
-			else 
-				o[1]={get_border(mx,from.cy,from.cx,from.cy,from.rx,from.ry)}
-				o[2]={mx,from.cy}
-				o[3]={mx,to.cy}
-				o[4]={get_border(mx,to.cy,to.cx,to.cy,to.rx,to.ry)}
-			end
+			o[1]={get_border(mx,from.cy,from.cx,from.cy,from.rx,from.ry)}
+			o[2]={mx,from.cy}
+			o[3]={mx,to.cy}
+			o[4]={get_border(mx,to.cy,to.cx,to.cy,to.rx,to.ry)}
 		end
---~ 		if o.LABEL then label{LABEL=o.LABEL,BGCOLOR="#ffffff",cx=mx,cy=my,rx=utf8strlen(o.LABEL)*fontsize/4,ry=fontsize/2} end
+		if o.LABEL then node{LABEL=o.LABEL,TYPE="colorbox",COLOR="#ffffff",cx=mx,cy=my,rx=utf8strlen(o.LABEL)*fontsize/4,ry=fontsize/2} end
+		
+		print(from.LABEL,to.LABEL,#o)
 		return path(o)
 	end
 
@@ -410,7 +333,7 @@ make_canvas=function(w,h,cols,rows,fontsize,linewidth)
 		if n<2 or not angle then return lst end
 		local s,c=math.sin(angle),math.cos(angle)
 		local ref=lst.REF or lst[1]
-		local x,y=get_xy(ref)
+		local x,y=get_xy(ref,nodes)
 		x=x or 0; y=y or 0
 		local rx,ry
 		for i,v in ipairs(lst) do
@@ -423,7 +346,7 @@ make_canvas=function(w,h,cols,rows,fontsize,linewidth)
 		return lst
 	end
 	
-	local link=function(lst)
+	local link=function( lst)
 		local n=#lst
 		if n<2 then return lst end
 		local shape,style,head= lst.SHAPE, lst.STYLE, lst.HEAD
@@ -452,21 +375,6 @@ make_canvas=function(w,h,cols,rows,fontsize,linewidth)
 		return o
 	end
 	
-	local bound_box=function(lst) -- get the bound box from a list
-		local minx,maxx,miny,maxy=math.huge,-math.huge,math.huge,-math.huge
-		local cx,cy,rx,ry,v
-		for i,v in ipairs(lst) do
-			cx,cy,rx,ry=v.cx,v.cy,v.rx,v.ry
-			v=cx+rx; maxx=maxx<v and v or maxx
-			v=cx-rx; minx=minx>v and v or minx
-			v=cy+ry; maxy=maxy<v and v or maxy
-			v=cy-ry; miny=miny>v and v or miny
-		end
-		cx,cy=(minx+maxx)/2,(miny+maxy)/2
-		rx,ry=(maxx-minx)/2,(maxy-miny)/2
-		return node{cx=cx,cy=cy,rx=rx,ry=ry,TYPE="rect",STYLE="fill:none;stroke-width:0;"}
-	end
-	
 	local copy_node=function(n)
 		local nn={}
 		for k,v in pairs(n) do
@@ -475,30 +383,39 @@ make_canvas=function(w,h,cols,rows,fontsize,linewidth)
 		return node(nn)
 	end
 	
-	return export,node,edge,rotate,translate,link,edges,label,path,marker,fill_pattern,copy_node,bound_box
+	local style=function(o)
+		local t={}
+		for k,v in pairs(o) do
+			k=STYLE_FMTS[k]
+			if k then push(t,format(k,tostring(v))) end
+		end
+		return concat(t)
+	end
+	
+	return export,node,edge,rotate,translate,link,edges,label,path,marker,fill_pattern,copy_node,style
 end
 
 SVG={
-	path=[[<path d = "@PATH@" fill = "@BGCOLOR or "none"@" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "@HEAD@" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="@STYLE or ''@" filter="@filter@" />]],
+	path=[[<path d = "@PATH@" fill = "@BGCOLOR or "none"@" stroke = "@COLOR@"  stroke-linejoin="round" marker-end = "@HEAD@" marker-mid="@MIDDLE@" marker-start="@TAIL@" style="@STYLE@" filter="@filter@"/>]],
 	label=[[<text x="@cx+tx@" y="@cy+ty@" stroke-width="0" fill="black" text-anchor="@align@">@LABEL@</text>]],
 	colorbox=[[<rect x="@cx-rx@" y="@cy-ry@" width="@rx+rx@" height="@ry+ry@" fill="@COLOR or '#ffffff'@" stroke="none"/>]],
 	
 	-- nodes
 	
-	rect=[[<rect x="@cx-rx@" y="@cy-ry@" width="@rx+rx@" height="@ry+ry@" filter="@filter@"  style="@STYLE or ''@"/>]],
-	roundrect=[[<rect x="@cx-rx@" y="@cy-ry@" rx="10" ry="10" width="@rx+rx@" height="@ry+ry@"  style="@STYLE or ''@" filter="@filter@"/>]],
-	ellipse=[[<ellipse cx="@cx@" cy="@cy@" rx="@rx@" ry="@ry@"   style="@STYLE or ''@" filter="@filter@" />]],
-	diamond=[[<path d="M @cx-rx@ @cy@ L @cx@ @cy-ry@ L @cx+rx@ @cy@ L @cx@ @cy+ry@ z"   style="@STYLE or ''@"  filter="@filter@" />]],
-	img=[[<image x="@cx-rx@" y="@cy-ry@" width="@rx+rx@" height="@ry+ry@" xlink:href="@SRC@" filter="@filter@"  style="@STYLE or ''@"/>]],
+	rect=[[<rect x="@cx-rx@" y="@cy-ry@" width="@rx+rx@" height="@ry+ry@" fill="@COLOR or 'url(#linear0)'@" filter="@filter@" stroke="@STROKE or ''@"/>]],
+	roundrect=[[<rect x="@cx-rx@" y="@cy-ry@" rx="10" ry="10" width="@rx+rx@" height="@ry+ry@" fill="@COLOR or 'url(#linear0)'@" filter="@filter@" stroke="@STROKE or ''@"/>]],
+	ellipse=[[<ellipse cx="@cx@" cy="@cy@" rx="@rx@" ry="@ry@"  fill="@COLOR or 'url(#linear0)'@" filter="@filter@" stroke="@STROKE or ''@"/>]],
+	diamond=[[<path d="M @cx-rx@ @cy@ L @cx@ @cy-ry@ L @cx+rx@ @cy@ L @cx@ @cy+ry@ z"  fill="@COLOR or 'url(#linear0)'@"  filter="@filter@" stroke="@STROKE or ''@"/>]],
+	img=[[<image x="@cx-rx@" y="@cy-ry@" width="@rx+rx@" height="@ry+ry@" xlink:href="@SRC@" filter="@filter@" stroke="@STROKE or ''@"/>]],
 
 	mulbox=[[<ellipse cx="@cx@" cy="@cy@" rx="@rx@" ry="@ry@"  fill="@COLOR or 'url(#linear0)'@" filter="@filter@"/><path d="M @cx-0.707*rx@ @cy-0.707*ry@ L @cx+0.707*rx@ @cy+0.707*ry@ M @cx-0.707*rx@ @cy+0.707*ry@ L @cx+0.707*rx@ @cy-0.707*ry@" />]],
 	addbox=[[<ellipse cx="@cx@" cy="@cy@" rx="@rx@" ry="@ry@"  fill="@COLOR or 'url(#linear0)'@" filter="@filter@"/><path d="M @cx-rx@ @cy@ L @cx+rx@ @cy@ M @cx@ @cy-ry@ L @cx@ @cy+ry@" />]],
 	
 	database=[[
-	 <ellipse cx="@cx@" cy="@cy+ry@" rx="@rx@" ry="@ry/2@"  style="@STYLE or ''@" filter="@filter@"/>
-	 <rect x="@cx-rx@" y="@cy-ry@" width="@rx+rx@" height="@ry+ry@" style="@STYLE or ''@" filter="@filter@" stroke="none"/>
-	 <ellipse cx="@cx@" cy="@cy-ry@" rx="@rx@" ry="@ry/2@"  style="@STYLE or ''@" filter="@filter@"/>
-	 <path d="M @cx-rx@ @cy-ry@ L @cx-rx@ @cy+ry@ M @cx+rx@ @cy-ry@ L @cx+rx@ @cy+ry@" />
+	 <ellipse cx="@cx@" cy="@cy+ry/2@" rx="@rx@" ry="@ry/2@"  fill="@COLOR or 'url(#linear0)'@" filter="@filter@"/>
+	 <rect x="@cx-rx@" y="@cy-ry@" width="@rx+rx@" height="@ry+ry/2@" fill="@COLOR or 'url(#linear0)'@" filter="@filter@" stroke="none"/>
+	 <ellipse cx="@cx@" cy="@cy-ry@" rx="@rx@" ry="@ry/2@"  fill="@COLOR or 'url(#linear0)'@" filter="@filter@"/>
+	 <path d="M @cx-rx@ @cy-ry@ L @cx-rx@ @cy+ry/2@ M @cx+rx@ @cy-ry@ L @cx+rx@ @cy+ry/2@" />
 	]],
 	
 	-- color
@@ -533,19 +450,6 @@ SVG['CANVAS']=[[
 		<marker id="point2d" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="orange" markerWidth="6" markerHeight="6" orient="auto">
 			<circle cx="10" cy="10" r="9" />
 		</marker>
-		
-				<marker id="point2d-black" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="black" markerWidth="6" markerHeight="6" orient="auto">
-			<circle cx="10" cy="10" r="9" />
-		</marker>
-		
-				<marker id="point2d-white" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="white" markerWidth="6" markerHeight="6" orient="auto">
-			<circle cx="10" cy="10" r="9" />
-		</marker>
-		
-				<marker id="point2d-gray" viewBox="0 0 20 20" refX="10" refY="10" markerUnits="strokeWidth" fill="#888888" markerWidth="6" markerHeight="6" orient="auto">
-			<circle cx="10" cy="10" r="9" />
-		</marker>
-		
 		 
 		 <filter id='shadow' filterRes='50' x='0' y='0'>
 			<feGaussianBlur stdDeviation='2 2'/>
@@ -577,15 +481,6 @@ SVG['CANVAS']=[[
 			<stop offset='100%' style='stop-color:rgb(220,220,220);stop-opacity:1'/>
 		</linearGradient>
 		
-		<linearGradient x1='100%' x2='0%' id='multi2' y1='100%' y2='100%'>
-			<stop offset='0%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
-			<stop offset='45%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
-			<stop offset='46%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
-			<stop offset='50%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
-			<stop offset='54%' style='stop-color:rgb(0,0,0);stop-opacity:1'/>
-			<stop offset='55%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
-			<stop offset='100%' style='stop-color:rgb(255,255,255);stop-opacity:1'/>
-		</linearGradient>
 		
 		<radialGradient id="radial0" cx="30%" cy="30%" r="50%">
 			<stop offset="0%" style="stop-color:rgb(255,255,255); stop-opacity:0" />
